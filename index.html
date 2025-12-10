@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IM_tutor quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
+    h1 { margin-bottom: 4px; }
+    h2 { margin-top: 0; font-size: 14px; font-weight: normal; color: #555; }
+    .question-block { border: 1px solid #ccc; padding: 12px; margin-bottom: 12px; border-radius: 6px; }
+    .question-title { font-weight: bold; margin-bottom: 6px; }
+    textarea { width: 100%; min-height: 80px; margin-top: 6px; }
+    .btn-row { margin-top: 6px; }
+    button { margin-right: 6px; }
+    .keywords, .suggest { margin-top: 6px; padding: 6px; border-radius: 4px; font-size: 14px; }
+    .keywords { background-color: #f3f8ff; border: 1px solid #c5d8ff; }
+    .suggest  { background-color: #f8fff3; border: 1px solid #d8ffc5; }
+  </style>
+</head>
+<body>
+
+<h1>IM_tutor quiz</h1>
+<h2>Type your answer first. Then use “Show keyword” and “Show suggested answer” to self‑check.</h2>
+
+<div id="quiz-container"></div>
+
+<script>
+// 7 IM_tutor questions
+const imTutorQuestions = [
+  {
+    id: 1,
+    question: "What is AI bias, and why is it a problem for organisations using AI systems?",
+    keywords: ["unfair", "systematic", "biased data", "discrimination", "legal", "ethical", "reputation"],
+    suggest_answer: "AI bias is systematic unfairness in AI outputs, usually caused by biased training data or model design. It can lead to discrimination against certain groups and creates legal, ethical and reputational risks for organisations."
+  },
+  {
+    id: 2,
+    question: "In an AI and Big Data world, what skills do workers need to stay valuable? Name at least TWO skills and briefly explain them.",
+    keywords: ["critical thinking", "problem solving", "data literacy", "interpret data", "communication", "teamwork", "creativity", "adaptability"],
+    suggest_answer: "Workers need skills such as critical thinking and problem-solving to question AI results, and data literacy to understand and interpret data and analytics. Soft skills like communication, teamwork, creativity and adaptability also help them do tasks that AI cannot easily replace."
+  },
+  {
+    id: 3,
+    question: "What is Analytics as a Service (AaaS)? Give ONE benefit and ONE risk for organisations.",
+    keywords: ["cloud", "external provider", "pay per use", "lower cost", "advanced tools", "data security", "dependence"],
+    suggest_answer: "Analytics as a Service is when an organisation uses an external or cloud provider to perform data analytics on a pay-per-use or subscription basis. A benefit is lower cost and access to advanced tools and experts, while a risk is data security and dependence on the external provider."
+  },
+  {
+    id: 4,
+    question: "Describe TWO applications of AI in banking and ONE risk.",
+    keywords: ["fraud detection", "credit scoring", "chatbot", "virtual assistant", "personalised offers", "bias", "privacy", "black box"],
+    suggest_answer: "In banking, AI can be used for fraud detection by identifying unusual transaction patterns and for credit scoring by assessing loan risk using many variables. A key risk is biased or unfair decisions, for example discriminating against certain customer groups."
+  },
+  {
+    id: 5,
+    question: "Explain TWO limitations of using generative AI (like ChatGPT) for important business decisions.",
+    keywords: ["inaccurate", "hallucination", "outdated data", "no understanding", "cannot access internal data", "needs human checking"],
+    suggest_answer: "Generative AI can produce inaccurate or hallucinated information and often does not know the latest data. It also has no real understanding of the business context and cannot see internal company data unless it is provided, so important decisions still need human checking and judgement."
+  },
+  {
+    id: 6,
+    question: "Explain how managers should work with AI systems: what tasks can be given to AI, and what should remain human responsibilities?",
+    keywords: ["routine tasks", "data analysis", "draft text", "human decision", "ethics", "oversight", "human in the loop"],
+    suggest_answer: "Managers can give AI routine and data‑heavy tasks such as data analysis and drafting reports or emails. Humans should keep responsibility for final decisions, ethical considerations and exceptional cases, acting as a human in the loop who reviews AI outputs and remains accountable."
+  },
+  {
+    id: 7,
+    question: "What is digital trust, and why is it important for businesses that use AI and data analytics?",
+    keywords: ["trust", "security", "privacy", "transparency", "fairness", "share data", "brand", "reputation"],
+    suggest_answer: "Digital trust means users believe a company’s digital services are secure, protect privacy, and use data fairly and transparently. It is important because if customers do not trust the business, they will not share data and the brand can be damaged, making it harder to use AI and analytics effectively."
+  }
+];
+
+// render quiz
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  imTutorQuestions.forEach(q => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+
+    block.innerHTML = `
+      <div class="question-title">Q${q.id}. ${q.question}</div>
+      <label>Your answer:</label>
+      <textarea id="answer_${q.id}" placeholder="Type your answer here..."></textarea>
+      <div class="btn-row">
+        <button type="button" onclick="showKeywords(${q.id})">Show keyword</button>
+        <button type="button" onclick="showSuggested(${q.id})">Show suggested answer</button>
+      </div>
+      <div id="keywords_${q.id}" class="keywords" style="display:none;"></div>
+      <div id="suggest_${q.id}" class="suggest" style="display:none;"></div>
+    `;
+
+    container.appendChild(block);
+  });
+}
+
+function showKeywords(id) {
+  const q = imTutorQuestions.find(item => item.id === id);
+  const div = document.getElementById('keywords_' + id);
+  if (!q || !div) return;
+  div.style.display = 'block';
+  div.textContent = "Keywords: " + q.keywords.join(", ");
+}
+
+function showSuggested(id) {
+  const q = imTutorQuestions.find(item => item.id === id);
+  const div = document.getElementById('suggest_' + id);
+  if (!q || !div) return;
+  div.style.display = 'block';
+  div.textContent = "Suggested answer: " + q.suggest_answer;
+}
+
+// init
+renderQuiz();
+</script>
+
+</body>
+</html>
