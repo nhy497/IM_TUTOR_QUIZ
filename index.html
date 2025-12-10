@@ -7,7 +7,9 @@
     body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
     h1 { margin-bottom: 4px; }
     h2 { margin-top: 0; font-size: 14px; font-weight: normal; color: #555; }
-    .question-block { border: 1px solid #ccc; padding: 12px; margin-bottom: 12px; border-radius: 6px; }
+    .controls { margin: 12px 0; }
+    select { margin-right: 8px; }
+    .question-block { border: 1px solid #ccc; padding: 12px; border-radius: 6px; margin-top: 8px; }
     .question-title { font-weight: bold; margin-bottom: 6px; }
     textarea { width: 100%; min-height: 80px; margin-top: 6px; }
     .btn-row { margin-top: 6px; }
@@ -20,9 +22,16 @@
 <body>
 
 <h1>IM_tutor quiz</h1>
-<h2>Type your answer first. Then use “Show keyword” and “Show suggested answer” to self‑check.</h2>
+<h2>Choose a question or generate one randomly. Type your answer, then reveal keywords and the suggested answer to self‑check.</h2>
 
-<div id="quiz-container"></div>
+<div class="controls">
+  <label for="questionSelect">Select question:</label>
+  <select id="questionSelect"></select>
+  <button type="button" onclick="loadSelectedQuestion()">Load question</button>
+  <button type="button" onclick="loadRandomQuestion()">Random question</button>
+</div>
+
+<div id="question-area"></div>
 
 <script>
 // 7 IM_tutor questions
@@ -71,27 +80,54 @@ const imTutorQuestions = [
   }
 ];
 
-// render quiz
-function renderQuiz() {
-  const container = document.getElementById('quiz-container');
+// populate dropdown
+function initSelect() {
+  const select = document.getElementById('questionSelect');
   imTutorQuestions.forEach(q => {
-    const block = document.createElement('div');
-    block.className = 'question-block';
-
-    block.innerHTML = `
-      <div class="question-title">Q${q.id}. ${q.question}</div>
-      <label>Your answer:</label>
-      <textarea id="answer_${q.id}" placeholder="Type your answer here..."></textarea>
-      <div class="btn-row">
-        <button type="button" onclick="showKeywords(${q.id})">Show keyword</button>
-        <button type="button" onclick="showSuggested(${q.id})">Show suggested answer</button>
-      </div>
-      <div id="keywords_${q.id}" class="keywords" style="display:none;"></div>
-      <div id="suggest_${q.id}" class="suggest" style="display:none;"></div>
-    `;
-
-    container.appendChild(block);
+    const opt = document.createElement('option');
+    opt.value = q.id;
+    opt.textContent = `Q${q.id}`;
+    select.appendChild(opt);
   });
+}
+
+// render single question
+function renderQuestion(q) {
+  const area = document.getElementById('question-area');
+  area.innerHTML = ""; // clear
+
+  if (!q) return;
+
+  const block = document.createElement('div');
+  block.className = 'question-block';
+  block.innerHTML = `
+    <div class="question-title">Q${q.id}. ${q.question}</div>
+    <label>Your answer:</label>
+    <textarea id="answer_${q.id}" placeholder="Type your answer here..."></textarea>
+    <div class="btn-row">
+      <button type="button" onclick="showKeywords(${q.id})">Show keyword</button>
+      <button type="button" onclick="showSuggested(${q.id})">Show suggested answer</button>
+    </div>
+    <div id="keywords_${q.id}" class="keywords" style="display:none;"></div>
+    <div id="suggest_${q.id}" class="suggest" style="display:none;"></div>
+  `;
+  area.appendChild(block);
+}
+
+function loadSelectedQuestion() {
+  const select = document.getElementById('questionSelect');
+  const id = parseInt(select.value, 10);
+  const q = imTutorQuestions.find(item => item.id === id);
+  renderQuestion(q);
+}
+
+function loadRandomQuestion() {
+  const index = Math.floor(Math.random() * imTutorQuestions.length);
+  const q = imTutorQuestions[index];
+  // also update dropdown selection for consistency
+  const select = document.getElementById('questionSelect');
+  select.value = q.id;
+  renderQuestion(q);
 }
 
 function showKeywords(id) {
@@ -110,8 +146,9 @@ function showSuggested(id) {
   div.textContent = "Suggested answer: " + q.suggest_answer;
 }
 
-// init
-renderQuiz();
+// init on load
+initSelect();
+loadSelectedQuestion(); // load first by default
 </script>
 
 </body>
